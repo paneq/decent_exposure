@@ -16,14 +16,20 @@ module DecentExposure
     _default_exposure
   end
 
+  def generated_exposed_methods
+    @generated_exposed_methods ||= Module.new.tap { |m| include(m) }
+  end
+
   def expose(name, &block)
     closured_exposure = default_exposure
-    define_method name do
-      @_resources       ||= {}
-      @_resources[name] ||= if block_given?
-        instance_eval(&block)
-      else
-        instance_exec(name, &closured_exposure)
+    generated_exposed_methods.module_eval do
+      define_method name do
+        @_resources       ||= {}
+        @_resources[name] ||= if block_given?
+          instance_eval(&block)
+        else
+          instance_exec(name, &closured_exposure)
+        end
       end
     end
     helper_method name
