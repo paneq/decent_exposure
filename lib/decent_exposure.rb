@@ -25,7 +25,8 @@ module DecentExposure
     generated_exposed_methods.module_eval do
       define_method name do
         @_resources       ||= {}
-        @_resources[name] ||= if block_given?
+        return @_resources[name] if @_resources.key?(name) # instead of ||= . @_resources[name] can contain nil or false and not be evaluated many times.
+        @_resources[name] = if block_given?
           instance_eval(&block)
         else
           instance_exec(name, &closured_exposure)

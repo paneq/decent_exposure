@@ -50,6 +50,23 @@ describe DecentExposure do
       end
     end
 
+    context 'nil/false exposures' do
+      before do
+        controller.class_eval do
+          expose(:resource) { false }
+        end
+      end
+
+      it 'returns the result of the exposed block from the method' do
+        instance.resource.should == false
+      end
+
+      it 'memoizes the value of the created method even when ||= operator would not memoize it' do
+        instance.expects(:memoizable).once.returns(false)
+        2.times { instance.resource }
+      end
+    end
+
     context '.default_exposure' do
       let(:defaulted_controller) { Class.new(Controller) }
       let(:instance) { defaulted_controller.new }
