@@ -33,7 +33,7 @@ module DecentExposure
         end
       end
     end
-    helper_method name
-    hide_action name
+    helper_method name if respond_to?(:helper_method)
+    hide_action name if respond_to?(:hide_action)
   end
 end
